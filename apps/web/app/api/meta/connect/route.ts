@@ -13,8 +13,10 @@ export async function GET(request: Request) {
   if (!organisation)
     return NextResponse.json({ error: 'organisation is required' }, { status: 400 });
   const appId = process.env.META_APP_ID,
-    redirect = process.env.META_REDIRECT_URI;
-  if (!appId || !redirect)
+    configId = process.env.META_CONFIG_ID,
+    redirect = process.env.META_REDIRECT_URI,
+    version = process.env.META_GRAPH_VERSION;
+  if (!appId || !configId || !redirect || !version)
     return NextResponse.json({ error: 'Meta server configuration is missing' }, { status: 503 });
   const state = randomBytes(32).toString('base64url');
   const { error } = await db.from('oauth_states').insert({
@@ -24,13 +26,14 @@ export async function GET(request: Request) {
     expires_at: new Date(Date.now() + 600000).toISOString(),
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  const oauth = new URL('https://www.facebook.com/dialog/oauth');
+  const oauth = new URL(`https://www.facebook.com/${version}/dialog/oauth`);
   oauth.search = new URLSearchParams({
     client_id: appId,
+    config_id: configId,
     redirect_uri: redirect,
     state,
-    scope: 'pages_show_list,pages_read_engagement,pages_manage_posts',
     response_type: 'code',
+    override_default_response_type: 'true',
   }).toString();
   return NextResponse.redirect(oauth);
 }
