@@ -1,0 +1,112 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #17202a;
+  background: #f5f8fb;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.popup {
+  width: 360px;
+  padding: 18px;
+}
+.options {
+  max-width: 680px;
+  margin: 30px auto;
+  padding: 24px;
+}
+.brand {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-weight: 800;
+}
+.mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  color: white;
+  background: linear-gradient(135deg, #1976d2, #19a7a0);
+}
+.card {
+  background: white;
+  border: 1px solid #dfe7ee;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf1f5;
+}
+.row:last-child {
+  border: 0;
+}
+.muted {
+  color: #6b7b8d;
+}
+.badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #176b46;
+  background: #dff6e9;
+  border-radius: 999px;
+  padding: 3px 7px;
+}
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+button {
+  border: 0;
+  border-radius: 9px;
+  padding: 10px;
+  background: #1976d2;
+  color: white;
+  font-weight: 750;
+  cursor: pointer;
+}
+button.secondary {
+  background: white;
+  color: #17202a;
+  border: 1px solid #dfe7ee;
+}
+button.danger {
+  background: #ba3434;
+}
+.field {
+  display: grid;
+  gap: 5px;
+  margin: 14px 0;
+}
+.field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.field input,
+.field select {
+  border: 1px solid #cfdbe5;
+  border-radius: 9px;
+  padding: 10px;
+  width: 100%;
+}
+.notice {
+  background: #e8f3fd;
+  border-left: 3px solid #1976d2;
+  padding: 10px;
+  font-size: 13px;
+}
+.error {
+  color: #a42d2d;
+  font-size: 13px;
+}

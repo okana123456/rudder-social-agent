@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Rudder Social Agent",
+  "version": "1.0.0",
+  "description": "Confirmation-first assistant for approved Facebook Group posts.",
+  "permissions": ["storage", "tabs", "scripting", "notifications", "alarms"],
+  "host_permissions": ["https://www.facebook.com/*", "https://*.supabase.co/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html" },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/groups/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'" }
+}

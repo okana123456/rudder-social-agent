@@ -1,0 +1,46 @@
+{
+  "name": "@rudder/desktop-agent",
+  "version": "1.0.0",
+  "description": "Windows tray companion for Rudder Social Agent",
+  "author": "Rudder Social Agent",
+  "private": true,
+  "main": "dist/main.cjs",
+  "scripts": {
+    "dev": "npm run build && electron .",
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "package:windows": "npm run build && electron-builder --win nsis --x64"
+  },
+  "dependencies": {
+    "electron-store": "^10.1.0"
+  },
+  "devDependencies": {
+    "electron": "39.8.10",
+    "electron-builder": "^26.0.12",
+    "esbuild": "0.28.1"
+  },
+  "build": {
+    "appId": "com.rudder.social-agent",
+    "productName": "Rudder Social Agent",
+    "asar": true,
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "Rudder-Social-Agent-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

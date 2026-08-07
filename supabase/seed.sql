@@ -1,0 +1,2 @@
+-- Local development only. Run after creating a test Auth user and replace the UUID below.
+-- select public.create_organisation('Rudder Demo','rudder-demo');
