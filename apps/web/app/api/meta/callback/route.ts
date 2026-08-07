@@ -45,7 +45,47 @@ export async function GET(request: Request) {
     );
     const pages = await pagesResponse.json();
     if (!pagesResponse.ok) throw new Error(pages.error?.message ?? 'Could not list Pages');
-    for (const page of pages.data ?? []) {
+    let pageList = pages.data ?? [];
+    if (pageList.length === 0) {
+      const debugUrl = new URL(`https://graph.facebook.com/${version}/debug_token`);
+      debugUrl.search = new URLSearchParams({
+        input_token: token.access_token,
+        access_token: `${process.env.META_APP_ID}|${process.env.META_APP_SECRET}`,
+      }).toString();
+      const debugResponse = await fetch(debugUrl);
+      const debug = await debugResponse.json();
+      if (!debugResponse.ok || !debug.data?.is_valid)
+        throw new Error(debug.error?.message ?? 'Meta returned an invalid access token');
+      const pageScopes = new Set([
+        'pages_show_list',
+        'pages_read_engagement',
+        'pages_manage_posts',
+      ]);
+      const pageIds = new Set<string>();
+      for (const grant of debug.data.granular_scopes ?? []) {
+        if (!pageScopes.has(grant.scope)) continue;
+        for (const pageId of grant.target_ids ?? []) pageIds.add(pageId);
+      }
+      pageList = await Promise.all(
+        [...pageIds].map(async (pageId) => {
+          const pageUrl = new URL(`https://graph.facebook.com/${version}/${pageId}`);
+          pageUrl.search = new URLSearchParams({
+            fields: 'id,name,picture,access_token,tasks',
+            access_token: token.access_token,
+          }).toString();
+          const pageResponse = await fetch(pageUrl);
+          const page = await pageResponse.json();
+          if (!pageResponse.ok)
+            throw new Error(page.error?.message ?? `Could not load Page ${pageId}`);
+          return page;
+        }),
+      );
+    }
+    if (pageList.length === 0)
+      throw new Error('Meta authorised access but returned no Facebook Pages');
+    for (const page of pageList) {
+      if (!page.id || !page.name || !page.access_token)
+        throw new Error('Meta returned incomplete Facebook Page credentials');
       const { data: connection, error } = await db
         .from('facebook_page_connections')
         .upsert(
