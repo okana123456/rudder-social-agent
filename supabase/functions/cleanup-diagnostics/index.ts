@@ -1,9 +1,9 @@
 import { handler, json } from '../_shared/http.ts';
 import { adminClient } from '../_shared/supabase.ts';
-import { requireServiceRole } from '../_shared/auth.ts';
+import { requireCronSecret } from '../_shared/auth.ts';
 Deno.serve(
   handler(async (request) => {
-    requireServiceRole(request);
+    requireCronSecret(request);
     const db = adminClient();
     const before = new Date(Date.now() - 7 * 86400000).toISOString();
     const { data, error } = await db.storage.from('diagnostics').list('', { limit: 1000 });

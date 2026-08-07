@@ -1,9 +1,9 @@
 import { handler, json } from '../_shared/http.ts';
 import { adminClient } from '../_shared/supabase.ts';
-import { requireServiceRole } from '../_shared/auth.ts';
+import { requireCronSecret } from '../_shared/auth.ts';
 Deno.serve(
   handler(async (request) => {
-    requireServiceRole(request);
+    requireCronSecret(request);
     const db = adminClient();
     const cutoff = new Date(Date.now() - 120000).toISOString();
     const { data: offline, error } = await db
