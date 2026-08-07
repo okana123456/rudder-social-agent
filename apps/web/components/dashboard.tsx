@@ -49,6 +49,25 @@ const nav = [
 ] as const;
 const labels = Object.fromEntries(nav.map(([id, label]) => [id, label]));
 type Row = Record<string, any>;
+function canonicalFacebookGroupUrl(value: FormDataEntryValue | null) {
+  const raw = String(value ?? '').trim();
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new Error('Enter the full Facebook Group URL.');
+  }
+  const supportedHosts = new Set([
+    'facebook.com',
+    'www.facebook.com',
+    'web.facebook.com',
+    'm.facebook.com',
+  ]);
+  const group = parsed.pathname.match(/^\/groups\/([^/?#]+)/i)?.[1];
+  if (parsed.protocol !== 'https:' || !supportedHosts.has(parsed.hostname.toLowerCase()) || !group)
+    throw new Error('Use the Group main-page URL, for example https://www.facebook.com/groups/123456.');
+  return `https://www.facebook.com/groups/${group}`;
+}
 export function Dashboard({ section }: { section: string }) {
   const path = usePathname();
   const router = useRouter();
@@ -680,7 +699,7 @@ function Groups({ orgId }: { orgId: string }) {
     const group = await create('facebook_groups', {
       organisation_id: orgId,
       name: fd.get('name'),
-      url: fd.get('url'),
+      url: canonicalFacebookGroupUrl(fd.get('url')),
       rules_notes: fd.get('notes'),
       promotions_allowed: fd.get('promotions') === 'on',
       approval_required: fd.get('approval') === 'on',
