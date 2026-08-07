@@ -70,7 +70,7 @@ export async function GET(request: Request) {
         [...pageIds].map(async (pageId) => {
           const pageUrl = new URL(`https://graph.facebook.com/${version}/${pageId}`);
           pageUrl.search = new URLSearchParams({
-            fields: 'id,name,picture,access_token,tasks',
+            fields: 'id,name,picture,access_token',
             access_token: token.access_token,
           }).toString();
           const pageResponse = await fetch(pageUrl);
